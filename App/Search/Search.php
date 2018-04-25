@@ -26,8 +26,6 @@ abstract class Search
      * Search constructor.
      * @param Client $client
      * @param SearchInterface $filterQuery
-     * @param $from
-     * @param $size
      */
     public function __construct(Client $client, SearchInterface $filterQuery)
     {
