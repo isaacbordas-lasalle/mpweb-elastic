@@ -85,11 +85,15 @@ function getHighlight($result, $field)
             ?>
             <tr>
                 <td colspan="6">
+                    <?php $n_pages = $total_hits / $size; ?>
                     <?php if($from > 0) { ?>
-                        <a href="/?from=<?php echo $from - 10; ?>">Prev.</a>
+                        <a href="/?from=<?php echo $from - $size; ?>">Prev.</a>
                     <?php }
-                    if ($from < $total_hits - 10) { ?>
-                        - <a href="/?from=<?php echo $from + 10; ?>">Next</a>
+                    for ($i = 1; $i < $n_pages; $i++) { ?>
+                        <a href="/?from=<?php echo $i * $size; ?>"><?php echo $i; ?></a>
+                    <?php }
+                    if ($from < $total_hits - $size) { ?>
+                        - <a href="/?from=<?php echo $from + $size; ?>">Next</a>
                     <?php } ?>
                 </td>
             </tr>
