@@ -13,6 +13,8 @@ $balance_from = (isset($_GET['balance_from'])) ? $_GET['balance_from'] : '';
 $balance_to = (isset($_GET['balance_to'])) ? $_GET['balance_to'] : '';
 $city = (isset($_GET['city'])) ? $_GET['city'] : '';
 $state = (isset($_GET['state'])) ? $_GET['state'] : '';
+$date_from = (isset($_GET['date_from'])) ? $_GET['date_from'] : '';
+$date_to = (isset($_GET['date_to'])) ? $_GET['date_to'] : '';
 ?>
 
 <div class="container">
@@ -51,6 +53,16 @@ $state = (isset($_GET['state'])) ? $_GET['state'] : '';
                         <label for="state">State</label>
                         <input type="text" class="form-control" name="state" id="state" placeholder="State"
                                value="<?php echo $state; ?>">
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="date_from">Birthday date From:</label>
+                        <input type="date" class="form-control" name="date_from" id="date_from" placeholder="Birthday date from"
+                               value="<?php echo $date_from; ?>">
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="date_to">Birthday date To:</label>
+                        <input type="date" class="form-control" name="date_to" id="date_to" placeholder="Birthday date to"
+                               value="<?php echo $date_to; ?>">
                     </div>
                 </div>
 			</div>

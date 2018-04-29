@@ -1,6 +1,5 @@
 <?php require __DIR__ . '/vendor/autoload.php';
 
-
 use App\Search\Types\SearchBankAccounts;
 use App\Search\Highlight\Highlight;
 use App\Search\SearchMultiQuery;
@@ -11,14 +10,19 @@ $balance_from = (isset($_GET['balance_from'])) ? $_GET['balance_from'] : '';
 $balance_to = (isset($_GET['balance_to'])) ? $_GET['balance_to'] : '';
 $city = (isset($_GET['city'])) ? $_GET['city'] : '';
 $state = (isset($_GET['state'])) ? $_GET['state'] : '';
+$date_from = (!empty($_GET['date_from'])) ? $_GET['date_from'] : 1;
+$date_to = (!empty($_GET['date_to'])) ? $_GET['date_to'] : 1;
 $from = (isset($_GET['from'])) ? $_GET['from'] : 0;
 $size = (isset($_GET['size'])) ? $_GET['size'] : 10;
 
-$searchable_fields = ['firstname', 'lastname'];
-$searchQuery       = new SearchMultiQuery($search, $balance_from, $balance_to, $city, $state, $searchable_fields);
-$highlighter       = new Highlight($searchable_fields);
+$from_age = date_diff(date_create($date_from), date_create('today'))->y;
+$to_age = date_diff(date_create($date_to), date_create('today'))->y;
 
-$client             = ClientBuilder::create()->build();
+$searchable_fields = ['firstname', 'lastname'];
+$searchQuery = new SearchMultiQuery($search, $balance_from, $balance_to, $city, $state, $from_age, $to_age, $searchable_fields);
+$highlighter = new Highlight($searchable_fields);
+
+$client = ClientBuilder::create()->build();
 $searchBankAccounts = new SearchBankAccounts($client, $searchQuery);
 $searchBankAccounts->setHighlighter($highlighter);
 $searchBankAccounts->setFrom($from);
@@ -66,6 +70,7 @@ function getHighlight($result, $field)
                 <th>ID</th>
                 <th>Name</th>
                 <th>Surname</th>
+                <th>Age</th>
                 <th>Balance</th>
                 <th>Email</th>
                 <th>City</th>
@@ -80,6 +85,7 @@ function getHighlight($result, $field)
                     <td>#<?php echo $result['account_number'] ?></td>
                     <td><?php echo getHighlight($filterResult, 'firstname') ?></td>
                     <td><?php echo getHighlight($filterResult, 'lastname') ?></td>
+                    <td><?php echo $result['age'] ?></td>
                     <td>$ <?php echo $result['balance'] ?></td>
                     <td><?php echo $result['email'] ?></td>
                     <td><?php echo $result['city'] ?></td>
@@ -113,8 +119,6 @@ function getHighlight($result, $field)
         echo "<pre>ElasticSearch Response \n";
         echo json_encode($filterResults, JSON_PRETTY_PRINT);
         echo "</pre>";
-
-
         ?>
     </div>
 </div>
