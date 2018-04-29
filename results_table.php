@@ -7,12 +7,15 @@ use App\Search\SearchMultiQuery;
 use Elasticsearch\ClientBuilder;
 
 $search = (isset($_GET['search'])) ? $_GET['search'] : '';
+$balance_from = (isset($_GET['balance_from'])) ? $_GET['balance_from'] : '';
+$balance_to = (isset($_GET['balance_to'])) ? $_GET['balance_to'] : '';
+$city = (isset($_GET['city'])) ? $_GET['city'] : '';
+$state = (isset($_GET['state'])) ? $_GET['state'] : '';
 $from = (isset($_GET['from'])) ? $_GET['from'] : 0;
 $size = (isset($_GET['size'])) ? $_GET['size'] : 10;
 
-
 $searchable_fields = ['firstname', 'lastname'];
-$searchQuery       = new SearchMultiQuery($search, $searchable_fields);
+$searchQuery       = new SearchMultiQuery($search, $balance_from, $balance_to, $city, $state, $searchable_fields);
 $highlighter       = new Highlight($searchable_fields);
 
 $client             = ClientBuilder::create()->build();
@@ -24,9 +27,9 @@ $searchBankAccounts->setSize($size);
 
 // Descomenta estas líneas si quieres ver la query que se está ejecutando.
 // Útil en el caso de que haya un error de sintaxis
-//echo "<pre>";
-//echo json_encode($searchBankAccounts->getQuery(), JSON_PRETTY_PRINT);
-//echo "</pre>";
+echo "<pre>";
+echo json_encode($searchBankAccounts->getQuery(), JSON_PRETTY_PRINT);
+echo "</pre>";
 
 $filterResults = $searchBankAccounts->search();
 
@@ -65,10 +68,11 @@ function getHighlight($result, $field)
                 <th>Surname</th>
                 <th>Balance</th>
                 <th>Email</th>
+                <th>City</th>
+                <th>State</th>
                 <th>ElasticSearch sort score</th>
             </tr>
             <?php
-
             foreach ($filterResults['hits']['hits'] as $filterResult) {
                 $result = $filterResult['_source'];
                 ?>
@@ -78,6 +82,8 @@ function getHighlight($result, $field)
                     <td><?php echo getHighlight($filterResult, 'lastname') ?></td>
                     <td>$ <?php echo $result['balance'] ?></td>
                     <td><?php echo $result['email'] ?></td>
+                    <td><?php echo $result['city'] ?></td>
+                    <td><?php echo $result['state'] ?></td>
                     <td><?php echo $filterResult['_score'] ?></td>
                 </tr>
                 <?php
